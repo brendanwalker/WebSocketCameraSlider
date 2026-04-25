@@ -5,6 +5,7 @@
 #include "WebSocketManager.h"
 #include "ConfigManager.h"
 #include "SliderManager.h"
+#include <WiFi.h>
 
 #include <sstream>
 
@@ -280,6 +281,8 @@ void AppStage_Monitor::render()
   display->setCursor(2, 22);
   display->printf("P: %+.2f %+.2f %+.2f", panPos, speed, accel);
   display->setCursor(2, 32);
-  display->printf("T: %+.2f %+.2f %+.2f", tiltPos, speed, accel);  
+  display->printf("T: %+.2f %+.2f %+.2f", tiltPos, speed, accel);
+  display->setCursor(2, 42);
+  display->print(WiFi.localIP().toString());
   display->display();    
 }

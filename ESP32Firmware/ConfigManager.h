@@ -127,6 +127,10 @@ public:
   void setMotorSlidePosition(int32_t slideStepperPosition);
   bool saveMotorPositionConfig();
 
+  bool getWiFiCredentials(String& outSSID, String& outPassword) const;
+  void setWiFiCredentials(const String& ssid, const String& password);
+  void clearWiFiCredentials();
+
 private:
   static ConfigManager* s_instance;
 
@@ -141,6 +145,11 @@ private:
   StepperMotorCalibration m_motorCalibrationConfig;
   StepperMotorPosition m_motorPositionConfig;
   bool m_isMotorPositionConfigDirty= false;
+
+  // WiFi Credentials
+  String m_wifiSSID;
+  String m_wifiPassword;
+  bool m_bHasWiFiCredentials= false;
 };
 
 #endif

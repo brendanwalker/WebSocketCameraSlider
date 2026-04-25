@@ -119,6 +119,13 @@ void setup()
   // Initialize fan management
   fanManager.setup();
 
+  // Check if rotary button is held at boot → force AP mode for WiFi reconfiguration
+  pinMode(ROTARY_ENCODER_BUTTON_PIN, INPUT_PULLUP);
+  delay(50); // pin settle time
+  bool forceAPMode = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == LOW);
+  if (forceAPMode)
+    Serial.println("Button held at boot — forcing WiFi AP mode");
+
   // Initialize rotary encoder
   Serial.println(F("Setup Rotary Encoder"));
   rotaryEncoder.setChangedHandler(rotaryValueChanged);
@@ -150,17 +157,26 @@ void setup()
   Serial.println(F("Setup Stepper Motor Manager"));
   sliderState.setup();
 
-  // Connect to WiFi
+  // Connect to WiFi (or run captive portal if no credentials saved / button held)
   Serial.println(F("Setup WiFi"));
-  wifiSetup.setup();
+  wifiSetup.setup(&display, forceAPMode);
 
-  // Show IP on OLED briefly so it's easy to find the device
+  // Show connection result on OLED briefly
   display.clearDisplay();
   display.setTextSize(1);
   display.setCursor(2, 10);
-  display.print("WiFi IP:");
-  display.setCursor(2, 24);
-  display.print(wifiSetup.getLocalIP());
+  if (wifiSetup.isConnected())
+  {
+    display.print("WiFi IP:");
+    display.setCursor(2, 24);
+    display.print(wifiSetup.getLocalIP());
+  }
+  else
+  {
+    display.print("WiFi: Not connected");
+    display.setCursor(2, 24);
+    display.print("WebSocket unavailable");
+  }
   display.display();
   delay(3000);
 

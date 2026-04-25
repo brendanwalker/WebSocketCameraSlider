@@ -71,6 +71,13 @@ void ConfigManager::load()
     Serial.printf("  slideStepperPosition: %d\n", m_motorPositionConfig.slideStepperPosition);
     
     m_isMotorPositionConfigDirty= false;
+
+    Serial.printf("[WiFi Credentials]\n");
+    m_wifiSSID = m_preferences.getString("wifi_ssid", "");
+    m_wifiPassword = m_preferences.getString("wifi_pass", "");
+    m_bHasWiFiCredentials = (m_wifiSSID.length() > 0);
+    Serial.printf("  ssid saved: %s\n", m_bHasWiFiCredentials ? "yes" : "no");
+
     m_bValidPrefs= true;
   }
   else
@@ -198,6 +205,37 @@ void ConfigManager::setMotorSlidePosition(int32_t slideStepperPosition)
   {
     m_motorPositionConfig.slideStepperPosition= slideStepperPosition;
     m_isMotorPositionConfigDirty= true;
+  }
+}
+
+bool ConfigManager::getWiFiCredentials(String& outSSID, String& outPassword) const
+{
+  outSSID = m_wifiSSID;
+  outPassword = m_wifiPassword;
+  return m_bHasWiFiCredentials;
+}
+
+void ConfigManager::setWiFiCredentials(const String& ssid, const String& password)
+{
+  m_wifiSSID = ssid;
+  m_wifiPassword = password;
+  m_bHasWiFiCredentials = true;
+  if (m_bValidPrefs)
+  {
+    m_preferences.putString("wifi_ssid", ssid);
+    m_preferences.putString("wifi_pass", password);
+  }
+}
+
+void ConfigManager::clearWiFiCredentials()
+{
+  m_wifiSSID = "";
+  m_wifiPassword = "";
+  m_bHasWiFiCredentials = false;
+  if (m_bValidPrefs)
+  {
+    m_preferences.remove("wifi_ssid");
+    m_preferences.remove("wifi_pass");
   }
 }
 
