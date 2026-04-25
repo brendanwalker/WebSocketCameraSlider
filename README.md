@@ -27,17 +27,29 @@ WebSocketCameraSlider/
 
 ## First-Time Setup
 
-### 1. WiFi credentials
+### 1. WiFi setup (captive portal)
 
-Copy the template and fill in your network details:
+WiFi credentials are configured at runtime — no source file edits required.
 
-```sh
-cd ESP32Firmware
-cp wifi_config.h.template wifi_config.h
-# Edit wifi_config.h with your SSID and password
-```
+**First boot:**
 
-`wifi_config.h` is gitignored and will never be committed.
+1. Power on the ESP32. The OLED will show:
+   ```
+   WiFi Setup Mode
+   Connect to:
+   CameraSlider-Setup
+   192.168.4.1
+   ```
+2. On your phone or laptop, connect to the `CameraSlider-Setup` WiFi network.
+3. A browser page should open automatically (captive portal). If it doesn't, navigate to `http://192.168.4.1`.
+4. Enter your network SSID and password, then tap **Save & Connect**.
+5. The ESP32 connects to your network and the OLED shows the assigned IP address.
+
+Credentials are saved to flash (NVS) and used automatically on every subsequent boot.
+
+**Reconfiguration:**
+
+Hold the rotary encoder button while powering on. The device will re-enter AP mode and you can enter new credentials.
 
 ### 2. Install tooling
 
@@ -78,7 +90,7 @@ pio run -t uploadfs
 pio device monitor
 ```
 
-On first boot the ESP32 will print its IP address to serial and display it on the OLED for 3 seconds.
+On first boot the ESP32 runs the WiFi captive portal (see First-Time Setup above). On subsequent boots it connects automatically and prints the IP address to serial.
 
 ## Development Workflow
 
