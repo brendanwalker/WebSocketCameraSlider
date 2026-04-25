@@ -257,7 +257,7 @@ void AppStage_Monitor::exit()
 void AppStage_Monitor::onRotaryButtonClicked(Button2* button)
 {
   Serial.println("onRotaryButtonClicked");
-  m_app->pushAppStage(AppStage_Monitor::getInstance());
+  m_app->pushAppStage(AppStage_MainMenu::getInstance());
 }
 
 void AppStage_Monitor::render()
