@@ -43,7 +43,9 @@ void AppStage_SliderCalibration::enter()
     Serial.println("Enter Slider Calibration");
     AppStage::enter();
 
-    WebSocketManager::getInstance()->setCommandHandler(this);
+    WebSocketManager* wsManager = WebSocketManager::getInstance();
+    wsManager->setCommandHandler(this);
+    wsManager->broadcastMessage("{\"type\":\"app_stage\",\"stage\":\"SliderCalibration\"}");
     HallSensorManager::getInstance()->setListener(this);
     setState(eSliderCalibrationState::Setup);
 }

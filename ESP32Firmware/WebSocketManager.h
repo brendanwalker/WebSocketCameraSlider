@@ -52,6 +52,7 @@ public:
     void setCommandHandler(WSCommandHandler* handler);
     void clearCommandHandler(WSCommandHandler* handler);
     void setStatus(const std::string& status);
+    void broadcastMessage(const String& json);
 
     void setup();
     void loop();

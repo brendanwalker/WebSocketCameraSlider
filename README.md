@@ -29,7 +29,7 @@ WebSocketCameraSlider/
 
 ### 1. WiFi setup (captive portal)
 
-WiFi credentials are configured at runtime — no source file edits required.
+WiFi credentials are configured at first boot.
 
 **First boot:**
 
@@ -142,9 +142,26 @@ The web app communicates with the ESP32 over a WebSocket at `ws://<esp32-ip>/ws`
 ### ESP32 → Client
 
 ```json
-{ "type": "position", "slider": 0.42, "pan": -0.1, "tilt": 0.05, "speed": 0.5, "accel": 0.5 }
-{ "type": "status",   "value": "move_start" }
-{ "type": "response", "id": "1", "data": "slider_calibration 0 32767" }
+{ "type": "position",  "slider": 0.42, "pan": -0.1, "tilt": 0.05, "speed": 0.5, "accel": 0.5 }
+{ "type": "status",    "value": "move_start" }
+{ "type": "response",  "id": "1", "data": "slider_calibration 0 32767" }
+{ "type": "app_stage", "stage": "Monitor" }
 ```
 
+| Field | Values | Description |
+|---|---|---|
+| `type: "position"` | — | Broadcast continuously with current motor positions and speed/accel fractions |
+| `type: "status"` | arbitrary string | Human-readable status update (e.g. `"move_start"`, `"move_complete"`) |
+| `type: "response"` | matches `id` from command | Reply to a command sent with an `id` field |
+| `type: "app_stage"` | `"Monitor"`, `"SliderCalibration"`, … | Broadcast whenever the active app stage changes on the device |
+
 Position values are fractions in the range **−1 to 1**.
+
+#### App stage values
+
+The `app_stage` message is sent when the device transitions between UI states. The web app uses this to reflect what is currently happening on the device (e.g. disabling calibration controls while the device is calibrating).
+
+| `stage` | Meaning |
+|---|---|
+| `Monitor` | Normal operation — all controls active |
+| `SliderCalibration` | Calibration in progress — calibrate buttons disabled in the web UI |

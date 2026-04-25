@@ -28,6 +28,7 @@ void AppStage_Monitor::enter()
   WebSocketManager* wsManager = WebSocketManager::getInstance();
   wsManager->setControlEnabled(true);
   wsManager->setCommandHandler(this);
+  wsManager->broadcastMessage("{\"type\":\"app_stage\",\"stage\":\"Monitor\"}");
 
   m_app->pushInputListener(this);
 }
@@ -244,7 +245,8 @@ void AppStage_Monitor::resume()
   WebSocketManager* wsManager = WebSocketManager::getInstance();
   wsManager->setControlEnabled(true);
   wsManager->setCommandHandler(this);
-  Serial.println("ENABLE WebSocket command processing");  
+  wsManager->broadcastMessage("{\"type\":\"app_stage\",\"stage\":\"Monitor\"}");
+  Serial.println("ENABLE WebSocket command processing");
 }
 
 void AppStage_Monitor::exit()

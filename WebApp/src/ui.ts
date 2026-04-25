@@ -34,8 +34,18 @@ export function initUI(ws: SliderWebSocket) {
   const limitsPanel   = el('limits-panel')
   const limitsContent = el('limits-content')
 
+  let isConnected = false
+  let isCalibrating = false
+
+  const calButtons = [btnCalPan, btnCalTilt, btnCalSlide]
+
+  function updateCalButtonsState() {
+    calButtons.forEach(b => (b.disabled = !isConnected || isCalibrating))
+  }
+
   // --- Connection state ---
   ws.onConnection((connected) => {
+    isConnected = connected
     statusDot.className = connected ? 'dot connected' : 'dot disconnected'
     statusText.textContent = connected ? 'Connected' : 'Disconnected'
     if (connected) {
@@ -46,7 +56,7 @@ export function initUI(ws: SliderWebSocket) {
     setControlsEnabled(connected)
   })
 
-  // --- Live positions ---
+  // --- Live positions and app stage ---
   ws.onMessage((msg) => {
     if (msg.type === 'position') {
       sliderDisplay.textContent = formatFrac(msg.slider)
@@ -54,6 +64,13 @@ export function initUI(ws: SliderWebSocket) {
       tiltDisplay.textContent   = formatFrac(msg.tilt)
     } else if (msg.type === 'status') {
       statusLine.textContent = msg.value
+    } else if (msg.type === 'app_stage') {
+      isCalibrating = msg.stage === 'SliderCalibration'
+      updateCalButtonsState()
+      calButtons.forEach(b => (b.textContent = b.dataset.label ?? b.textContent))
+      if (isCalibrating) {
+        statusLine.textContent = 'Calibrating...'
+      }
     }
   })
 
@@ -85,29 +102,14 @@ export function initUI(ws: SliderWebSocket) {
     ws.sendCommandNoReply(`set_pos ${s} ${p} ${t}`)
   })
 
-  btnCalPan.addEventListener('click', async () => {
-    btnCalPan.disabled = true
-    btnCalPan.textContent = 'Calibrating...'
-    await ws.sendCommand('calibrate pan')
-    btnCalPan.disabled = false
-    btnCalPan.textContent = 'Calibrate Pan'
-  })
+  // Calibrate buttons — state driven by app_stage broadcasts from the device
+  btnCalPan.dataset.label   = 'Calibrate Pan'
+  btnCalTilt.dataset.label  = 'Calibrate Tilt'
+  btnCalSlide.dataset.label = 'Calibrate Slide'
 
-  btnCalTilt.addEventListener('click', async () => {
-    btnCalTilt.disabled = true
-    btnCalTilt.textContent = 'Calibrating...'
-    await ws.sendCommand('calibrate tilt')
-    btnCalTilt.disabled = false
-    btnCalTilt.textContent = 'Calibrate Tilt'
-  })
-
-  btnCalSlide.addEventListener('click', async () => {
-    btnCalSlide.disabled = true
-    btnCalSlide.textContent = 'Calibrating...'
-    await ws.sendCommand('calibrate slide')
-    btnCalSlide.disabled = false
-    btnCalSlide.textContent = 'Calibrate Slide'
-  })
+  btnCalPan.addEventListener('click',   () => ws.sendCommandNoReply('calibrate pan'))
+  btnCalTilt.addEventListener('click',  () => ws.sendCommandNoReply('calibrate tilt'))
+  btnCalSlide.addEventListener('click', () => ws.sendCommandNoReply('calibrate slide'))
 
   btnSave.addEventListener('click', async () => {
     btnSave.disabled = true
@@ -141,9 +143,9 @@ export function initUI(ws: SliderWebSocket) {
   }
 
   function setControlsEnabled(enabled: boolean) {
-    const controls = [btnStop, btnSetPos, btnCalPan, btnCalTilt, btnCalSlide,
-                      btnSave, speedCtrl, accelCtrl, sliderCtrl, panCtrl, tiltCtrl]
+    const controls = [btnStop, btnSetPos, btnSave, speedCtrl, accelCtrl, sliderCtrl, panCtrl, tiltCtrl]
     controls.forEach(c => (c.disabled = !enabled))
+    updateCalButtonsState()
   }
 
   // Start disabled until connected

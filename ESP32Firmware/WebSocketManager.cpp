@@ -169,6 +169,11 @@ void WebSocketManager::setStatus(const std::string& status)
     s_ws.textAll(json);
 }
 
+void WebSocketManager::broadcastMessage(const String& json)
+{
+    s_ws.textAll(json);
+}
+
 void WebSocketManager::processMessage(uint32_t clientId, const String& json)
 {
     JsonDocument doc;

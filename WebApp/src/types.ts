@@ -19,7 +19,12 @@ export interface ResponseMessage {
   data: string
 }
 
-export type ServerMessage = PositionMessage | StatusMessage | ResponseMessage
+export interface AppStageMessage {
+  type: 'app_stage'
+  stage: string
+}
+
+export type ServerMessage = PositionMessage | StatusMessage | ResponseMessage | AppStageMessage
 
 // Client → Server commands
 export interface CommandMessage {
