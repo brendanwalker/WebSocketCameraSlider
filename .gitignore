@@ -11,3 +11,5 @@ ESP32Firmware/wifi_config.h
 # Node modules
 WebApp/node_modules/
 WebApp/dist/
+
+.vscode/
