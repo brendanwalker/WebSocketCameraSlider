@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Camera Slider</title>
+</head>
+<body>
+  <div class="app">
+
+    <header>
+      <h1>Camera Slider</h1>
+      <div class="connection">
+        <span id="status-dot" class="dot disconnected"></span>
+        <span id="status-text">Disconnected</span>
+        <span id="status-line" class="status-line"></span>
+      </div>
+    </header>
+
+    <!-- Live Positions -->
+    <section class="card">
+      <h2>Position</h2>
+      <table class="pos-table">
+        <tr>
+          <th>Slider</th>
+          <td><span id="pos-slider">—</span></td>
+        </tr>
+        <tr>
+          <th>Pan</th>
+          <td><span id="pos-pan">—</span></td>
+        </tr>
+        <tr>
+          <th>Tilt</th>
+          <td><span id="pos-tilt">—</span></td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- Position Control -->
+    <section class="card">
+      <h2>Set Position</h2>
+      <div class="slider-row">
+        <label>Slider</label>
+        <input id="ctrl-slider" type="range" min="-1" max="1" step="0.001" value="0" />
+        <span id="val-slider" class="range-val">0.000</span>
+      </div>
+      <div class="slider-row">
+        <label>Pan</label>
+        <input id="ctrl-pan" type="range" min="-1" max="1" step="0.001" value="0" />
+        <span id="val-pan" class="range-val">0.000</span>
+      </div>
+      <div class="slider-row">
+        <label>Tilt</label>
+        <input id="ctrl-tilt" type="range" min="-1" max="1" step="0.001" value="0" />
+        <span id="val-tilt" class="range-val">0.000</span>
+      </div>
+      <button id="btn-set-pos" class="btn btn-primary">Set Position</button>
+    </section>
+
+    <!-- Speed / Accel -->
+    <section class="card">
+      <h2>Speed &amp; Acceleration</h2>
+      <div class="slider-row">
+        <label>Speed</label>
+        <input id="ctrl-speed" type="range" min="0" max="1" step="0.01" value="0.5" />
+        <span id="val-speed" class="range-val">0.50</span>
+      </div>
+      <div class="slider-row">
+        <label>Accel</label>
+        <input id="ctrl-accel" type="range" min="0" max="1" step="0.01" value="0.5" />
+        <span id="val-accel" class="range-val">0.50</span>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <section class="card">
+      <h2>Controls</h2>
+      <div class="btn-group">
+        <button id="btn-stop" class="btn btn-danger">Stop</button>
+        <button id="btn-cal-pan" class="btn">Calibrate Pan</button>
+        <button id="btn-cal-tilt" class="btn">Calibrate Tilt</button>
+        <button id="btn-cal-slide" class="btn">Calibrate Slide</button>
+        <button id="btn-save" class="btn">Save Config</button>
+      </div>
+    </section>
+
+    <!-- Motor Limits (collapsible) -->
+    <section class="card">
+      <button id="limits-toggle" class="btn btn-outline limits-toggle">Motor Limits ▼</button>
+      <div id="limits-panel" class="limits-panel">
+        <div id="limits-content"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <script type="module" src="/src/index.ts"></script>
+</body>
+</html>
